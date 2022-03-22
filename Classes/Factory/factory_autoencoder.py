@@ -1,3 +1,5 @@
+import sys
+
 from Library.modules import ModuleList, Module
 
 from Classes.Dataset.BaseDataset import BaseDataset
@@ -9,7 +11,11 @@ from Classes.Modells.modells import BaseHierarchicHalfDepthAutoencoder, DebugMod
 
 from torchvision.transforms import Compose, ToPILImage, Resize, RandomResizedCrop, ToTensor, Normalize, Grayscale
 
+
 def get_factory():
+    print('from factory')
+    #print(globals())
+
     return {
         'dataset': Module(BaseDataset),
         'model': Module(BaseHierarchicHalfDepthAutoencoder),
@@ -27,3 +33,5 @@ def get_factory():
         'loaders':  Module(BaseDataLoader),
         'optimizer': Module(AdamOptimizer),
     }
+
+    #return {'test': 'test'}

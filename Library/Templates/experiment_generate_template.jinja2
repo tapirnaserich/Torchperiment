@@ -1,0 +1,11 @@
+from {{data.base_path}}.{{data.path}} import get_factory
+from Library.modules import ModuleDict, Module
+from Library.experimentbase import Experiment
+
+
+params = {
+    {% for p in data.params -%}
+        '{{ p }}': None,
+    {% endfor %}}
+e = Experiment(params=params, module_graph=ModuleDict(get_factory()))
+e.fit()

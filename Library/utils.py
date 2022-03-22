@@ -7,6 +7,17 @@ import csv
 import pandas as pd
 import json
 import dill
+from jinja2 import Template, FileSystemLoader, Environment
+
+
+def compile_template(template_path, data):
+   directory, file = template_path.rsplit('/',1)
+   templateLoader = FileSystemLoader(searchpath=directory)
+   templateEnv = Environment(loader=templateLoader)
+   template = templateEnv.get_template(file)
+   output = template.render(data=data)
+   return output
+
 
 def serialize_dill_to_disk(data, path):
    serialized = dill.dumps(data)
