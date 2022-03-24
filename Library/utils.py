@@ -85,6 +85,7 @@ def show_image(images, labels, mean, std, target_size):
    for i in range(images.shape[0]):
       image = images[i]
       label = labels[i]
+      print(int(label))
       image = T.Lambda(lambda x: x.repeat(3,1,1))(image)
       image = image.permute(1,2,0)
       image = image * std + mean
@@ -93,6 +94,6 @@ def show_image(images, labels, mean, std, target_size):
       out = np.array(image * 255,dtype= np.uint8)
       out = imutils.resize(out, width=target_size[0], height=target_size[1])
 
-      cv2.imshow(f"{label}", out)
+      cv2.imshow(f"{int(label)}", out)
       cv2.waitKey()
 

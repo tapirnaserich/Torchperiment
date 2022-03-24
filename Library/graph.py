@@ -140,12 +140,12 @@ class Network(nn.Module):
                 if 'p' in self.seq[k]:
                     vs =  []
                     subseq =  self.seq[k]['p']
-                    #debug_output = "before: ["
+                    debug_output = "before: ["
                     for subp in subseq:
                         vs.append(self.values[subp])
-                        #debug_output = debug_output + f"{self.values[subp].shape}, "
+                        debug_output = debug_output + f"{self.values[subp].shape}, "
                     x = self.elements[k](*vs)
-                    #debug_output = debug_output + "]"
+                    debug_output = debug_output + "]"
                     #print(debug_output)
                 else:
                     #print(f"before: {x.shape}")

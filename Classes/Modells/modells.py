@@ -20,6 +20,27 @@ class DebugModell(Network):
         }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class BaseHierarchicHalfDepthAutoencoder(Network):
     def architecture(self):
         return {
