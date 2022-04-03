@@ -29,3 +29,8 @@ class ListenerActorPrinting(ListenerActorBase):
 
     def value_changed(self, all_values, experiment):
         pass
+
+    def next_trial(self, all_values, experiment):
+        trial = all_values['trial']['trial'][-1]
+
+        print(f'Trial: {trial.number} with {trial.params}')

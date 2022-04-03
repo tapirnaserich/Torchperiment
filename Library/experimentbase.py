@@ -4,7 +4,6 @@ import torch
 from Library.modules import Module, ModuleDict
 from Library.utils import serialize_dict_to_disk, pretty, deserialize_dict_from_disk, deserialize_dill_from_disk
 import dill
-from Classes.Factory.factory_autoencoder import get_factory
 
 class Experiment():
 

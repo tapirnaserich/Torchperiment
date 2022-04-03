@@ -19,3 +19,7 @@ class ListenerActorBase(metaclass=abc.ABCMeta):
     def value_changed(self, all_values, experiment):
         pass
 
+    @abc.abstractmethod
+    def next_trial(self, all_values, experiment):
+        pass
+

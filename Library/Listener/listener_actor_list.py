@@ -20,3 +20,7 @@ class ListenerActorList(ListenerActorBase):
     def value_changed(self, all_values, experiment):
         for a in self.actors:
             a.value_changed(all_values, experiment)
+
+    def next_trial(self, all_values, experiment):
+        for a in self.actors:
+            a.next_trial(all_values, experiment)

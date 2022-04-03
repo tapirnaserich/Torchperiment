@@ -27,7 +27,7 @@ def get_factory():
         'trainer': Module(TrainerMnist),
         'actor_list': Module(PrintAndStoreActorsList),
         'loaders':  Module(BaseDataLoader),
-        'optimizer': Module(AdamOptimizer),
+        #'optimizer': Module(AdamOptimizer),
     }
 
     #return {'test': 'test'}

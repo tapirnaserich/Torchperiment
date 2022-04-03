@@ -48,13 +48,17 @@ class TrainerBase():
 
         values_to_track_epoch=['avg_train_acc', 'avg_train_loss', 'avg_valid_acc', 'avg_valid_loss', 'valid_min_loss', 'iteration', 'duration']
         values_to_track_minibatch=['loss','epoch', 'iteration']#, 'duration']
+        values_to_track_trial=['trial']
+
 
         l.add_topics(values_to_track_epoch, ['epoch'])
         l.add_topics(values_to_track_minibatch, ['batch'])
+        l.add_topics(values_to_track_trial, ['trial'])
 
         l.add_signal('next_epoch', self.actor_list.next_epoch)
         l.add_signal('next_batch', self.actor_list.next_batch)
         l.add_signal('valid_loss_decreased', self.actor_list.valid_loss_decreased)
+        l.add_signal('next_trial', self.actor_list.next_trial)
 
         # l.add_value("value", "loss", ["batch"])
         # l.add_value("snd_value", "avg_train_acc", ["epoch"])
@@ -150,6 +154,10 @@ class TrainerBase():
         #print(f"fitfunction:  {experiment_name}")
 
         valid_min_loss = np.Inf
+        avg_train_loss = 0
+        avg_train_acc = 0
+        avg_valid_loss = 0
+        avg_valid_acc = 0
         #os.mkdir(f'{self.experiments_base_path}/{experiment_name}')
 
         self.model.to('cuda')
@@ -181,13 +189,14 @@ class TrainerBase():
 
             self.listener.call_signal('next_epoch')
 
-            '''
-            path = f"{self.experiments_base_path}/{experiment_name}/epoch{i+1}.pt"
-            torch.save(model.state_dict(), path)
-            self.set_value("model_path", path)
-            df_out = self.get_df()
-            df_out.to_csv(f"{self.experiments_base_path}/{experiment_name}/data.csv")
-            '''
+        return avg_valid_acc
+        '''
+        path = f"{self.experiments_base_path}/{experiment_name}/epoch{i+1}.pt"
+        torch.save(model.state_dict(), path)
+        self.set_value("model_path", path)
+        df_out = self.get_df()
+        df_out.to_csv(f"{self.experiments_base_path}/{experiment_name}/data.csv")
+        '''
 
 
 

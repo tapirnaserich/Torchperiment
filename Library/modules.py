@@ -4,7 +4,25 @@ import copy
 import inspect
 from Library.utils import pretty, serialize_dict_to_disk, deserialize_dict_from_disk
 
+class Value:
+    def __init__(self, obj, field):
+        self.field = field
+        self.obj = obj
 
+    def get_value(self):
+        o = self.obj
+        for p in self.field.split('.')[:-1]:
+            #print(p)
+            o = o[p]
+
+        #print(self.field.split('.')[-1])
+        o = getattr(o,self.field.split('.')[-1] )
+
+        return o
+
+
+class Dependency:
+    pass
 
 class ModuleDict():
     def __init__(self, modules):
@@ -14,8 +32,9 @@ class ModuleDict():
     def find_dependencies(self):
         dependencies = []
         for k in self.modules.keys():
-
+            #print(k)
             m = self.modules[k]
+            #print(m.dependencies)
             if m.dependencies is None:
                 continue
 
@@ -34,7 +53,6 @@ class ModuleDict():
                 graph[k] = Module.Deserialize(serialized[k])
             elif m_type == 'ModuleList':
                 graph[k] = ModuleList.Deserialize(serialized[k])
-
 
         return ModuleDict(graph)
 
@@ -62,10 +80,9 @@ class ModuleDict():
 
             params_to_use[k] = p
 
-
         stack_to_build = []
         build_modules = {}
-        print(params_to_use)
+        #print(params_to_use)
         for k in self.modules.keys():
             if not k in unresolved_dependencies:
                 continue
@@ -87,8 +104,8 @@ class ModuleDict():
                     if key in unresolved_dependencies:
                         unresolved_dependencies.remove(key)
 
-                    print(module)
-                    print('*' * 30)
+                    #print(module)
+                    #print('*' * 30)
                     build_module = module.build(params_to_use)
                     params_to_use[key] = build_module
                     build_modules[key] = build_module
@@ -106,7 +123,7 @@ class ModuleDict():
         return out
 
 class ModuleList():
-    def __init__(self, module_cls, modules = [], dependencies = None, args = None):
+    def __init__(self, module_cls, modules=[], dependencies = None, args = None):
         self.module_cls = module_cls
         self.modules = modules
         self.dependencies = self.find_dependencies() if dependencies is None else dependencies
@@ -149,8 +166,7 @@ class ModuleList():
 
         return ModuleList(module_cls, modules, dependencies)
 
-
-    def build(self, params = None):
+    def build(self, params=None):
         all_modules = []
         for m in self.modules:
             all_modules.append(m.build(params))
@@ -169,20 +185,26 @@ class ModuleList():
         return out
 
 
-class Module():
-    def __init__(self, module_cls, args = None, dependencies = None):
+class Module:
+    def __init__(self, module_cls, args=None, dependencies=None):
         self.module_cls = module_cls
-        self.args = args
+        self.args = args if args is not None else {}
         self.dependencies = dependencies if dependencies is not None else []
         self.signature = {}
+
         if len(self.dependencies) == 0:
+            for k in self.args.keys():
+                a = self.args[k]
+                if type(a) is Dependency:
+                    self.dependencies.append(k)
+
             deps = {}
 
             if 'Classes' in str(self.module_cls):
                 deps = inspect.signature(self.module_cls.__init__).parameters
 
             elif 'function' in str(self.module_cls):
-                deps =inspect.signature(self.module_cls).parameters
+                deps = inspect.signature(self.module_cls).parameters
 
             for d in deps.keys():
                 if d == 'self':
@@ -194,7 +216,9 @@ class Module():
         #print(f"\t{self.args}")
         #print(f"\t{self.dependencies}")
         #print("\n")
-        args = copy.deepcopy(self.args) if not self.args is None or type(self.args) is tuple else {}
+        #args = copy.deepcopy(self.args) if not self.args is None or type(self.args) is tuple else {}
+        args = self.args if not self.args is None or type(self.args) is tuple else {}
+
         #print(self.module_cls)
         #print('*' * 30)
 
@@ -208,6 +232,11 @@ class Module():
                     args[d] = params[d]
         #print(f"args: {args}")
         self.args = args
+        #print(self.args)
+        for k in self.args.keys():
+            v = self.args[k]
+            if type(v) is Value:
+                args[k] = v.get_value()
 
         if len(args) == 0:
             return self.module_cls()

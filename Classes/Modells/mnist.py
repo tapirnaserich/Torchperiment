@@ -5,12 +5,33 @@ from Library.modell import Flatten
 
 
 
+class VariableNet(Network):
+    def __init__(self, blackboard, in_features=28*28):
+        self.register('blackboard', blackboard)
+        self.register('in_features', in_features)
+        self.out_features = 0
+        super().__init__()
+
+    def architecture(self):
+        architecture = {}
+
+        for i in range(self.blackboard['n_layers']):
+            self.out_features = self.blackboard[f'layer_{i}_units']
+            p_dropout = self.blackboard[f'layer_{i}_drop_out']
+            architecture[f'layer{i}'] = Module(nn.Linear, {'in_features': self.in_features, 'out_features': self.out_features})
+            architecture[f'relu{i}'] = Module(nn.ReLU)
+            architecture[f'dropout{i}'] = Module(nn.Dropout, {'p': p_dropout})
+
+            self.in_features = self.out_features
+
+        return architecture
+
+
 
 class MnistNet(Network):
     def __init__(self, num_layers):
         self.register('num_layers', num_layers)
         super().__init__()
-
 
     def architecture(self):
         return {
