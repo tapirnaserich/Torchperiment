@@ -45,14 +45,14 @@ if __name__ == '__main__':
                              default='Classes.Factory')
     args_parser.add_argument('-p', '--path',
                              action='store', type=str,
-                             default='factory_mnist')
+                             default='factory_optuna')
 
     args_parser.add_argument('-bt', '--base_target',
                                   action='store', type=str,
                                   default='Experiments')
     args_parser.add_argument('-t', '--target',
                                 action='store', type=str,
-                                default='test')
+                                default='test_storing')
 
     args = args_parser.parse_args()
     print(path)
